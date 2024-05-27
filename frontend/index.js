@@ -1,157 +1,82 @@
-function moduleProject3() {
+async function moduleProject4() {
 
-  // 👉 TASK 1 - Write a `buildNav` component that returns a nav
+  // 👇 WORK WORK BELOW THIS LINE 👇
+  const footer = document.querySelector('footer')
+  const currentYear = new Date().getFullYear()
+  footer.textContent = `© BLOOM INSTITUTE OF TECHNOLOGY ${currentYear}`
 
-  function buildNav(links) {
-    //  ✨ do your magic here
-    const container = document.createElement('nav')
-    links.forEach(link => {
-      let a = document.createElement('a')
-      a.href = link.href
-      a.title = link.title
-      a.textContent = link.textContent
-    container.appendChild(a)
-    })
-    return container 
-  }
+  let descriptions = [
+    ["Sunny", "☀️"],
+    ["Cloudy", "☁️"],
+    ["Rainy", "🌧️"],
+    ["Thunderstorm", "⛈️"],
+    ["Snowy", "❄️"],
+    ["Partly Cloudy", "⛅️"]
+  ]
 
-  // ❗ DOM creation using your `buildNav` component (do not change):
-  document.querySelector('header').appendChild(buildNav([
-    { href: 'https://www.example.com', textContent: 'Home', title: 'Go to the home page' },
-    { href: 'https://www.example.com/about', textContent: 'About', title: 'Learn more about our company' },
-    { href: 'https://www.example.com/services', textContent: 'Services', title: 'View our available services' },
-    { href: 'https://www.example.com/blog', textContent: 'Blog', title: 'Read our latest blog posts' },
-    { href: 'https://www.example.com/contact', textContent: 'Contact', title: 'Get in touch with us' },
-  ]))
+  // 👉 Tasks 1 - 5 go here
+document.querySelector('#weatherWidget').computedStyleMap.display = 'none'
+document.querySelector('#citySelect').addEventListener('change' , async evt => {
+  console.log('selection changed')
+  try {
+    document.querySelector('#citySelect').setAttribute('disabled' , 'disabled')
+    document.querySelector('#weatherWidget').computedStyleMap.display = 'none'
+    document.querySelector('.info').textContent = 'Fetching weather data...'
 
-  // 👉 TASK 2A - Write a `buildLearnerCard` component that returns a card
+    console.log(evt.target.value)
+    let city = evt.target.value
+    let url = 'http://localhosthost:3003/api/weather?city=${city}'
 
-  function buildLearnerCard(learner, languages) {
-    //  ✨ do your magic here
-    const container = document.createElement('div')
-    Clipboard.classList.add('leaner-card')
+    const res = await axios.get{url}
 
-    const nameP = document.createElement('p')
-    nameP. textContent = learner.fullName
+    document.querySelector('#weatherWidget').computedStyleMap.display = 'block'
+    document.querySelector('.info').textContent = ''
+    evt.target.removeAttribute('disabled')
 
-    const dobP = document.createElement('p')
-    dobP.textContent = `Date of Birth: ${learner.dateOfBirth} '
-
-    const favLangP = document.createElement('P')
-    const favLanguage = languages.find(lang => lang.id === learner.favLanguage)
-    favLangP.textContent = `Favorite Language: ${favLanguage.name}`;
-
-    [nameP, idElement, dobP, favLangP].forEach (p => {
-      card.appendchild(p)
-    })
-
-    card.addEventLisnter('click', evt => {
-      document.querySelectorAll('.leaner-card').forEach(card => {
-        card.classList.remove('active')
-      })
-      card.classList.add('active')
-    })
-
-    return card
-  }
-
-  {
-    // 👉 TASK 2B - Use the two variables below to make learner Cards, and put them in the DOM
-
-    let languages = [
-      { id: 37, name: 'JavaScript', creator: 'Brendan Eich', year: 1995 },
-      { id: 82, name: 'Python', creator: 'Guido van Rossum', year: 1991 },
-      { id: 12, name: 'Java', creator: 'James Gosling', year: 1995 },
-      { id: 53, name: 'C#', creator: 'Microsoft Corporation', year: 2000 },
-      { id: 91, name: 'Ruby', creator: 'Yukihiro Matsumoto', year: 1995 }
-    ]
-    let learners = [
-      { id: 24, fullName: 'Kenneth Fisher', dateOfBirth: '1990-01-01', favLanguage: 82 },
-      { id: 53, fullName: 'Jess Williams', dateOfBirth: '1985-05-10', favLanguage: 37 },
-      { id: 72, fullName: 'Brandon Nguyen', dateOfBirth: '1992-09-15', favLanguage: 53 },
-      { id: 41, fullName: 'Sabah Beydoun', dateOfBirth: '1988-03-25', favLanguage: 91 },
-      { id: 17, fullName: 'Daniel Castillo', dateOfBirth: '1995-11-05', favLanguage: 12 }
-    ]
-    //  ✨ do your magic here
-  }
-
-  // 👉 TASK 3 - Write a `buildFooter` component that returns a footer
-
-  function buildFooter(footerData) {
-    //  ✨ do your magic here
-  
-    const footer = document.createElement('footer')
-
-
-    let companyInfoDiv = document.createElement('div')
-    companyInfoDiv.class.add('company-info')
+    let { data } = res
     
-    let  companyNameP = document.createElement('p')
-    companyNameP.classList.add('company-name)
-    companyNameP.textconten = footerData.address
+    document.querySelector('#apparentTemp div:nth-child(2)')
+    .textContent = `${data.current.apparent_temperature}"`
+    document.querySelector('#todayDescription')
+    .textContent = descriptions.find(d => d[0] === data.current.weather_description)[1]
+    document.querySelector('#todayStats div:nth-child(1)')
+    .textContent = `${data.current.temperature_min}"/${data.current.temperature_max}"`
+    document.querySelector('#todayStats div:nth-child(2)')
+    .textContent = `Precipitation: ${data.current.precipitation_probability * 100} %`
+    document.querySelector('#todayStats div:nth-child(3)')
+    .textContent = `Humidity: ${data.current.humidity}%`
+    document.querySelector('#todayStats div: nth-child(4)')
+    .textContent = `Wind: ${data.current.wind_speed}m/s`
 
-    let addressP = document.createElement('p')
-    addressP.classList.add('address')
-    addressP.textcontext = footerDat.address
+    data.forecast.daily.forEach((day, idx) => {
+      let card = document.querySelectorAll('.next-day')[idx]
 
-    let contactEmailP = document.createElement('p')
-    contactEmailP.classlist.add('contact-email')
-    contactEmailP.innerHtML = `Email: <a href="mailto: ${footerData.contactEmail}"> ${footerData.contactEmail}</a> 
+      let weekDay = card.children[0]
+      let apparent = card.children[1]
+      let miinMax = card.children[2]
+      let precipit = card.children[3]
 
+      weekDay .textContent = getWeekDay(day.data)
+      apparent.textContent = descriptions.find(d => d[0] === day.weather_description)[1]
+      miinMax.textContent = `${day.temperature_min}"/${day.temperature_max}"`
+      precipit.textContent = `Precipitation: ${day.precipitation_probability * 100}%`
+    })
 
-  companyInfoDiv.appendChild(companyNameP)
-  companyInfoDiv.appendChild(address)
-  companyInfoDiv.appendChild(contactEmailP)
-
-  let socialMediaDiv = document.createElement('div')
-  socialMediaDiv.classList.add('social-media')
-
-  for(let platform in footerData.socialMedia) {
-    let socialMediaLink = document.createElement('a')
-    socialMediaLink.href = footerData.socialMedia[platform]
-    socialMediaLink.textContent = platform.charAt(0).toUpperCase() + platform.slice(1)
-    socialMediaDiv.appendChild(socialMediaLink)
-  }
-
-  let currentYear = new Date().getFullYear()
-  let copyright = document.createElement('div')
-  copyright.textContent = `@ ${footerData.companyName.toUpperCase()} ${currentYear}`
-
-  
-  
-  footer.appendChild(companyInfoDiv)
-  footer.appendChild(socialMediaDiv)
-  footer.appendChild(copyright)
-    return footer
-
-  }
-
-  // ❗ DOM creation using your `buildFooter` component (do not change):
-  document.body.appendChild(buildFooter({
-    companyName: 'Bloom Institute of Technology',
-    address: '123 Main Street, City, Country',
-    contactEmail: 'info@example.com',
-    socialMedia: {
-      twitter: 'https://twitter.com/example',
-      facebook: 'https://www.facebook.com/example',
-      instagram: 'https://www.instagram.com/example',
-    },
-  }))
-
-  // 👉 TASK 4 - Clicking on the section should deactivate the active card
-
-  //  ✨ do your magic here
-document.addEventListener('click', evt => {
-    if(evt.target === document.querySelector(section)) {
-        const learners = document.querySelectorAll('.learner-card')
-        learners.forEach(card => card.classList.remove('active'))
-    }
+    document.querySelector('#location').firstElementChild.textContent = data.location.city
+  } catch {err} {
+  } 
 })
+function getWeekDay(date) {
+  return date 
+}
+  // 👆 WORK WORK ABOVE THIS LINE 👆
+
 }
 
-// ❗ DO NOT CHANGE THIS CODE
-// ❗ DO NOT CHANGE THIS CODE
-// ❗ DO NOT CHANGE THIS CODE
-if (typeof module !== 'undefined' && module.exports) module.exports = { moduleProject3 }
-else moduleProject3()
+// ❗ DO NOT CHANGE THE CODE  BELOW
+// ❗ DO NOT CHANGE THE CODE  BELOW
+// ❗ DO NOT CHANGE THE CODE  BELOW
+if (typeof module !== 'undefined' && module.exports) module.exports = { moduleProject4 }
+else moduleProject4()
+
   
